@@ -1,0 +1,20 @@
+---
+title: "Infer01"
+author: "Daniel Jiménez"
+
+---
+
+## Install packages
+
+```{r}
+install.packages("infer")
+install.packages("tidyverse")
+```
+
+
+Other opcion is 
+
+```{r}
+
+```
+
