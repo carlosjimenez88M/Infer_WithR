@@ -62,7 +62,14 @@ The workflow of this package is designed around this idea. Starting out with som
 Throughout this vignette, we make use of `gss`, a dataset supplied by `infer` containing a sample of 3000 observations sampled from the *General Social Survey*. 
 
 
+## References 
 
+
+| Link | Descripción |
+| --- | --- |
+| [:link:](https://moderndive.com/)| Statistical Inference via Data Science| 
+| [:link:](https://rpubs.com/rellison/89834)| Statistical inference|
+| [:link:](https://bookdown.org/cteplovs/ismaykim/ismaykim.pdf)|Statistical Inference|
 
 
 
