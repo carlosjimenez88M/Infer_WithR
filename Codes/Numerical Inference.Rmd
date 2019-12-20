@@ -1,0 +1,76 @@
+---
+title: "infer 02 - Numerical inference"
+author: "Daniel Jiménez"
+date: "12/19/2019"
+output: html_document
+---
+
+
+
+```{r}
+library(infer);
+library(tidyverse);
+library(emo);
+theme_set(theme_classic())
+
+```
+
+
+
+# Some approach
+## Bootstrapping techniques
+
+* First : Bootstrap is a powerful method for statistical inference (with based on computational algorithms) that allows assigning measures of accuracy to sample estimates.
+
+* Second : It`s widely applied in other statistical inference such as 
+    + Confidence interval
+    + Regression Models
+    + Machine Learning
+    
+Some conceptions : i) Assume the data is representative, ii) use random sample with replacement to make inferences about the unknown population (statistical universe). iii) Calculate or compute robust statistics tools - mean, variance , error , median , etc through on samples. iv) repeat steps many times to creat bootstrap distribution
+
+
+In this example , with iris `emo::ji("face")` I generate bootstrap distribution for median. 
+
+
+
+```{r}
+sepal_med_ci<-iris%>%
+  specify(response = Sepal.Length )%>% # Specify the variable of interes
+  generate(reps = 100, type="bootstrap")%>%
+  calculate(stat = "median")
+
+sepal_med_ci%>%
+  head()%>%
+  knitr::kable(format = 'markdown', caption = 'Bootstrap Distribution for media')
+```
+
+
+
+
+Now , is necessary generate histogram plot about this
+
+```{r}
+sepal_med_ci%>%
+  ggplot(aes(stat))+
+  geom_histogram(bins = 10)+
+  labs(title = 'Boostrap Distribution')+
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+
+##
+
+
+
+
+
+## References 
+* https://towardsdatascience.com/an-introduction-to-the-bootstrap-method-58bcb51b4d60
+
+*  
+
+![](https://www.youtube.com/watch?v=O_Fj4q8lgmc)
+
+
+
