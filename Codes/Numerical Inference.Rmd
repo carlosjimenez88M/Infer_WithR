@@ -1,5 +1,5 @@
 ---
-title: "infer 02 - Numerical inference"
+title: "infer 02 - Numerical inference Boostrap"
 author: "Daniel Jiménez"
 date: "12/19/2019"
 output: html_document
@@ -11,6 +11,7 @@ output: html_document
 library(infer);
 library(tidyverse);
 library(emo);
+library(openintro);
 theme_set(theme_classic())
 
 ```
@@ -120,6 +121,103 @@ The standard error method is a better estimate.
 visualize(sepal_med_ci,bins = 10)+
   shade_confidence_interval(endpoints =c(5.564156,6.035844))
 ```
+
+
+## Re-centering a bootstrap distribution
+
+
+Boostrap distribution are by design centered at  the observed sample  statistics. However since in a Hypothesis test we assume that the null hypothesis is true, we shift the bootstrap distribution to be centered at the null value.
+
+The p-value is then defined as proportion of simulations that yield a sample statistic at least as favorable to the alternative hypothesis as observed sample statistics.
+
+```{r}
+n_replicates<-300
+
+sepal_med_ht <- iris %>%
+  specify(response = Sepal.Length) %>%
+  hypothesize(null = "point", med = 5.8) %>% 
+  generate(reps = n_replicates, type = "bootstrap") %>% 
+  calculate(stat = "median")
+
+sepal_med_ht%>%
+  head()%>%
+  knitr::kable(caption = "Generate 15000 bootstrap samples centered at null.")
+  
+```
+
+
+Now Calculate the observed median Sepal
+
+
+```{r}
+sepal_med_obs <- iris %>%
+  summarize(median_sepal = median(Sepal.Length)) %>%
+  pull()
+
+print(sepal_med_obs)
+  
+```
+
+
+
+Now Calculate the p-value as the proportion of bootstrap statistics greater than the observed statistic.
+
+
+```{r}
+sepal_med_ht %>%
+  # Filter for bootstrap stat greater than or equal to observed stat
+  filter(stat >= sepal_med_obs) %>%
+  # Calculate the p-value
+  summarize(p_val = n() / n_replicates)
+```
+
+Now one question : We would like to evaluate whether this data provides evidence that the median Sepal of Iris Sepal Length   is greater than 5.8 cm. **What is the conclusion of the hypothesis test at the 5% significance level?**
+
+We dont have evidence that median Sepal Length  in Iris is grater that 5.8. We fail to reject H0 since the p-value is above the significance level
+
+
+
+## Other example
+
+
+We'll wrap up inference on a single parameter of a numerical distribution by revisiting the ncbirths dataset, specifically the weight variable, indicating the birth weight of the baby. Do these data provide convincing evidence that the average birth weight of babies born in North Carolina is different than 7 pounds?
+
+```{r}
+data(ncbirths)
+
+n_replicates <- 1500
+
+weight_mean_ht <- ncbirths %>%
+  specify(response = weight) %>%
+  hypothesize(null = "point", mu = 7) %>% 
+  generate(reps = n_replicates, type = "bootstrap") %>% 
+  calculate(stat = "mean")
+
+
+weight_mean_ht
+```
+
+
+Calculate the mean observed weight and pull out the value.
+
+```{r}
+weight_mean_obs <- ncbirths %>%
+  summarize(mean_weight = mean(weight)) %>%
+  pull()
+```
+
+
+Calculate the two-sided p-value.
+
+```{r}
+weight_mean_ht %>%
+  filter(stat >= weight_mean_obs) %>%
+  summarize(
+    one_sided_p_val = n() / n_replicates,
+    two_sided_p_val = 2 * one_sided_p_val
+  )
+```
+
 
 
 
