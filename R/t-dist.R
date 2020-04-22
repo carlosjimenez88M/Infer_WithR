@@ -217,16 +217,51 @@ ncbirths_complete_habit <- openintro::ncbirths %>%
 # Calculate observed difference in means
 diff_mean_obs <- ncbirths_complete_habit %>%
   # Group by habit group
-  ___ %>%
+  group_by(habit) %>%
   # Calculate mean weight for each group
-  ___(mean_weight = ___) %>%
+  summarize(mean_weight = mean(weight)) %>%
   # Pull out the value
-  ___ %>%
+  pull() %>%
   # Calculate the difference
-  ___ 
+  diff() 
 
 
 
+n_replicates <- 1000
+
+# Generate 1000 differences in means via randomization
+diff_mean_ht <- ncbirths_complete_habit %>% 
+  # Specify weight vs. habit
+  specify(weight ~habit) %>% 
+  # Null = no difference between means
+  hypothesize(null = "independence") %>% 
+  # Shuffle labels 1000 times
+  generate(reps = n_replicates, type = "permute") %>%
+  # Calculate test statistic, nonsmoker then smoker
+  calculate(stat = "diff in means",order =c( "nonsmoker","smoker"))
+
+
+
+# Calculate p-value
+diff_mean_ht %>%
+  # Identify simulated test statistics at least as extreme as observed
+  filter(stat <= diff_mean_obs) %>%
+  # Calculate p-value
+  summarize(
+    one_sided_p_val = n() / n_replicates,
+    two_sided_p_val = 2 * one_sided_p_val
+  )
+
+
+
+## Bootstrap CI for difference in two means ---------------
+
+# 1. Take a bootstrap sample of each sample - a random sample taken with replacement from each of the original samples, of the same size as each of the original samples.
+# 2.Calculate the bootstrap statistic - a statistic such as difference in means, medians, proportion, etc. computed based on the bootstrap samples.
+
+# 3.Repeat steps (1) and (2) many times to create a bootstrap distribution - a distribution of bootstrap statistics.
+
+# 4. Calculate the interval using the percentile or the standard error method.
 
 
 
