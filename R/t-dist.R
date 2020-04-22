@@ -61,9 +61,42 @@ y < z
 
 
 
+## Estimating a mean with a t-interval ---------
+
+# Central limit Theorem
+#$\hat{x} ~ N(mean=\mu,SE=\frac{\lambda}{\sqrt(n)})$
+# Where :
+# Standard error = sd of the sampling distribution.
+# But \lambda is unknow, the standad error is estimated by the standard
+# deviation of the sample dividided by sqrt root of the sample 
+# $SE=\frac{s}{\sqrt(n)}$
+# And additional uncertainty introduced by sample standar deviation
+# $t_{df=n-1}$ for inference mean 
+
+## Conditions 
+# 1. Independent observations : Random Sampling with replacement <10%
+# 2. Sample size / skew :The more skewed the original population distribution
+# the larger a sample seze need 
 
 
 
+t.test(gss$hours,conf.level = 0.95)
+
+# Here says : 95%  confident that average number of hours per month American 
+# Hours works extra hours beyod theris usual schedule is 40
+
+openintro::acs12->acs12
+
+## Filter employed 
+acs12_emp <- acs12 %>%
+  filter(employment=="employed")
+
+## CI 95%
+
+t.test(acs12_emp$time_to_work,conf.level = 0.95)
 
 
 
+## Other t test
+t.test(acs12_emp$hrs_work,conf.level = 0.95)
+# For this analysis, it would have made more sense to use a subset excluding part time workers.
