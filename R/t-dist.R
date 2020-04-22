@@ -206,6 +206,31 @@ diff_mean_ht %>%
   summarize(p_val = n() / n_replicates)
 
 
+# The data provide convincing evidence of a difference
+
+
+## Exercice
+
+ncbirths_complete_habit <- openintro::ncbirths %>%
+  filter(!is.na(habit))
+
+# Calculate observed difference in means
+diff_mean_obs <- ncbirths_complete_habit %>%
+  # Group by habit group
+  ___ %>%
+  # Calculate mean weight for each group
+  ___(mean_weight = ___) %>%
+  # Pull out the value
+  ___ %>%
+  # Calculate the difference
+  ___ 
+
+
+
+
+
+
+
 
 
 
