@@ -2,8 +2,7 @@
 # =        Boostrap and estimate        =
 # =           Daniel Jiménez            =
 # =         Senior Data Scientist       =
-# =            Merlin Jobs              =
-# =             2019-08-12              =
+# =             2020-04-21              =
 # =======================================
 
 
