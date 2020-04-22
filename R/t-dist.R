@@ -100,3 +100,113 @@ t.test(acs12_emp$time_to_work,conf.level = 0.95)
 ## Other t test
 t.test(acs12_emp$hrs_work,conf.level = 0.95)
 # For this analysis, it would have made more sense to use a subset excluding part time workers.
+
+
+# t-interval for paired data
+
+
+# As the sample size increases, the margin of error of the interval increases as well.
+
+
+
+
+## Testing a mean with a t-test ---------
+openintro::textbooks->textbooks
+#Suppose instead of the mean, we want to estimate the median difference in prices of the same textbook at the UCLA bookstore and on Amazon. 
+#You can't do this using a t-test, as the Central Limit Theorem only talks about means, not medians. You'll use an infer pipeline to estimate the median.
+
+hsb2<-hsb2%>%
+  mutate(diff=math - science)
+
+
+n_replicates <- 15000
+
+# Generate 15000 bootstrap medians centered at null
+scorediff_med_ht <- hsb2 %>%
+  specify(response = diff) %>%
+  hypothesize(med = 0, null = "point") %>%
+  generate(reps = n_replicates,type = "bootstrap") %>% 
+  calculate("median")
+   
+scorediff_med_ht
+
+
+#The probability of getting a random sample of 200 high school students where the median difference between their math and science test scores is at least 1, if in fact there is no difference between the median math and science scores.
+
+## Does a treatment using embryonic stem cells help improve heart function following a heart attack more so than traditional therapy?
+
+openintro::stem.cell->stem.cell
+
+
+## Calculate changes 
+
+stem.cell%>%
+  mutate(change= after - before )
+
+## Create Hypothesis 
+
+# H0: \mu_{esc} = \mu_{control} There is no difference between average change in treatment and control groups
+# HA: \mu_{esc} > \mu_{control} There is difference between average change in treatment and control groups
+
+
+## Conduct the hypotesis test
+
+
+#Write the values of change on 18 index cards.
+#(1) Shuffle the cards and randomly split them into two equal sized decks: treatment and control.
+#(2) Calculate and record the test statistic: difference in average change between treatment and control.
+# Repeat (1) and (2) many times to generate the sampling distribution.
+# east as extreme as the observed difference in sample means.
+# Calculate P-value
+
+
+# From previous step
+stem.cell <- stem.cell %>%
+  mutate(change = after - before)
+
+# Calculate observed difference in means
+diff_mean <- stem.cell %>%
+  # Group by treatment group
+  group_by(trmt) %>%
+  # Calculate mean change for each group
+  summarize(mean_change = mean(change)) %>% 
+  # Pull out the value
+  pull() %>%
+  # Calculate difference
+  diff()
+
+# See the result
+diff_mean
+
+
+
+n_replicates <- 1000
+
+# Generate 1000 differences in means via randomization
+n_replicates <- 1000
+
+# Generate 1000 differences in means via randomization
+diff_mean_ht <- stem.cell %>%
+  # y ~ x
+  specify(change ~ trmt) %>% 
+  # Null = no difference between means
+  hypothesize(null = "independence") %>%  
+  # Shuffle labels 1000 times
+  generate(reps = 1000, type = "permute") %>% 
+  # Calculate test statistic
+  calculate(stat = "diff in means", order = c("esc", "ctrl")) 
+
+
+
+
+diff_mean_ht %>%
+  # Filter for simulated test statistics greater than observed
+  filter(stat >= diff_mean) %>%
+  # Calculate p-value
+  summarize(p_val = n() / n_replicates)
+
+
+
+
+
+
