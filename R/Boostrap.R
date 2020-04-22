@@ -130,14 +130,77 @@ visit_sd_ci%>%
 # to be centered at the null value.
 
 # The p-value is then defined as the proportion of simulations that yeild a sample
-# 
+
+
+ 
+## Excercise
+
+n_replicates <- 15000
+
+# Generate 15000 bootstrap samples centered at null
+rent_med_ht <- manhattan %>%
+  specify(response = rent) %>%
+  # Use a point hypothesis with a median of 2500
+  hypothesize(null = "point", med = 2500) %>% 
+  generate(reps = n_replicates, type = "bootstrap") %>% 
+  calculate(stat = "median")
 
 
 
 
+rent_med_obs <- manhattan %>%
+  # Calculate observed median rent
+  summarize(median_rent = median(rent)) %>%
+  # Pull out the value
+  pull()
+
+# Calculate the p-value as the proportion of bootstrap statistics greater than the observed statistic.
+
+rent_med_ht %>%
+  # Filter for bootstrap stat greater than or equal to observed stat
+  filter(stat >= rent_med_obs) %>%
+  # Calculate the p-value
+  summarize(p_val = n() / n_replicates)
 
 
+## Execice
 
+n_replicates <- 1500
+
+weight_mean_ht <- data %>%
+  # Specify weight as the response
+  specify(response = weight) %>%
+  # Set the hypothesis that weights are 7 pounds
+  hypothesize(null = "point",mu = 7)%>% 
+  # Generate 1500 bootstrap replicates
+  generate(reps = n_replicates, type = "bootstrap" ) %>% 
+  # Calculate the mean
+  calculate("mean")
+
+
+weight_mean_ht
+
+
+# Calculate observed mean
+weight_mean_obs <- data %>%
+  # Summarize to calculate the mean observed weight
+  summarize(mean_weight = mean(weight)) %>% 
+  # Pull out the value
+  pull()
+
+
+weight_mean_obs
+
+
+# Calculate p-value
+weight_mean_ht %>%
+  # Filter on stat greater than or equal to weight_mean_obs
+  filter(stat >= weight_mean_obs) %>%
+  # p_val is twice the number of filtered rows divided by the total number of rows
+  summarize(
+    one_sided_p_val = n() / n_replicates,
+    two_sided_p_val = one_sided_p_val *2
+  )
 
 
 
